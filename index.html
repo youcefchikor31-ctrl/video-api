@@ -1,1 +1,124 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحميل الفيديوهات</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 30px 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+        }
+        h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+            text-align: left;
+        }
+        button {
+            background-color: #000;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background-color: #333;
+        }
+        #result {
+            margin-top: 20px;
+            min-height: 50px;
+        }
+        .download-btn {
+            display: inline-block;
+            background-color: #28a745;
+            color: white;
+            padding: 12px 20px;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-weight: bold;
+            width: 90%;
+            box-sizing: border-box;
+        }
+        .loader {
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>أداة التحميل 📥</h2>
+        <p style="color: #666; font-size: 14px;">ضع رابط تيك توك أو انستغرام هنا:</p>
+        <input type="text" id="videoUrl" placeholder="https://www.tiktok.com/..." dir="ltr">
+        <button onclick="fetchVideo()">تجهيز الفيديو</button>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        async function fetchVideo() {
+            const urlInput = document.getElementById('videoUrl').value.trim();
+            const resultDiv = document.getElementById('result');
+
+            if (!urlInput) {
+                resultDiv.innerHTML = '<p style="color:red;">يرجى إدخال الرابط أولاً!</p>';
+                return;
+            }
+
+            resultDiv.innerHTML = '<p class="loader">جاري جلب الفيديو من السيرفر... ⏳</p>';
+
+            try {
+                // هنا قمنا بربط السيرفر الخاص بك الذي أنشأته على Render
+                const myApiUrl = `https://video-api-rmoh.onrender.com/get_video?url=${encodeURIComponent(urlInput)}`;
+                
+                const response = await fetch(myApiUrl);
+                const data = await response.json();
+
+                if (data.success) {
+                    resultDiv.innerHTML = `
+                        <p style="color:green; font-weight:bold;">تم تجهيز الفيديو بنجاح! 🎉</p>
+                        <a href="${data.download_link}" class="download-btn" target="_blank" download>تحميل بأعلى جودة</a>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<p style="color:red;">حدث خطأ: ${data.error}</p>`;
+                }
+
+            } catch (error) {
+                resultDiv.innerHTML = '<p style="color:red;">لا يمكن الاتصال بالسيرفر. قد يكون السيرفر في وضع النوم، انتظر ثواني وحاول مجدداً.</p>';
+                console.error(error);
+            }
+        }
+    </script>
+
+</body>
+</html>
 
